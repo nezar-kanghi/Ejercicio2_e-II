@@ -2,7 +2,7 @@ import javax.naming.directory.InitialDirContext;
 import java.sql.*;
 import java.util.Scanner;
 
-public class Main {
+public class CRUDciclista {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -12,6 +12,7 @@ public class Main {
 
         int dato = 0;
 
+        //MENU
         do{
             System.out.println("MENU (0 para salir)");
             System.out.println("1. Insertar un nuevo ciclista");
@@ -22,6 +23,7 @@ public class Main {
 
             switch (dato){
 
+                //Insertar ciclista
                 case 1:
                     try(Connection conexion = DriverManager.getConnection(url, usuario, password);
                         Statement statement = conexion.createStatement()){
@@ -38,15 +40,15 @@ public class Main {
                         System.out.println("Ingresa el id_equipo que quieres insertar: ");
                         int id_equipo = sc.nextInt();
 
-                        String sql1 = "SELECT MAX (ID_CICLISTA) AS max_id FROM CICLISTA";
+                        String sql1 = "SELECT MAX (ID_CICLISTA) AS max_id FROM CICLISTA";  //sacamos el max id
                         ResultSet rs = statement.executeQuery(sql1);
                         while(rs.next()){
-                            idCiclista = rs.getInt("max_id") + 1;
+                            idCiclista = rs.getInt("max_id") + 1; //le sumamos uno apra añadirselo al siguiente ciclista
 
                         }
 
 
-                        String sql = "INSERT INTO ciclista (ID_CICLISTA, NOMBRE, NACIONALIDAD, EDAD, ID_EQUIPO) VALUES (?,?,?,?,?)";
+                        String sql = "INSERT INTO ciclista (ID_CICLISTA, NOMBRE, NACIONALIDAD, EDAD, ID_EQUIPO) VALUES (?,?,?,?,?)"; //añadimos los datos
                         PreparedStatement ps = conexion.prepareStatement(sql);
                         ps.setInt(1, idCiclista);
                         ps.setString(2, nombre);
@@ -63,6 +65,7 @@ public class Main {
                     break;
 
                 case 2:
+                    //actualizamos ciclista
                     try(Connection conexion = DriverManager.getConnection(url,usuario,password)){
 
                         System.out.println("Ingresa la edad que quieres actualizar: ");
@@ -82,6 +85,7 @@ public class Main {
                     break;
                 case 3:
 
+                    //Borramos ciclista
                     try(Connection conexion = DriverManager.getConnection(url,usuario,password)){
 
                         System.out.println("ID del ciclista a eliminar:");
@@ -100,7 +104,7 @@ public class Main {
 
                         ResultSet rs = ps1.executeQuery();
 
-                        if(rs.next()){
+                        if(rs.next()){ //comprobamos que existe
 
                             if(rs.getInt(1) > 0){
 
@@ -109,7 +113,7 @@ public class Main {
                         }
 
 
-                        if(existe){
+                        if(existe){ //si existe se borra
 
                             // Eliminar primero en PARTICIPACION
 
@@ -126,8 +130,7 @@ public class Main {
 
                             String borrarCiclista = "DELETE FROM CICLISTA WHERE ID_CICLISTA = ?";
 
-                            PreparedStatement ps3 =
-                                    conexion.prepareStatement(borrarCiclista);
+                            PreparedStatement ps3 = conexion.prepareStatement(borrarCiclista);
 
                             ps3.setInt(1,idCiclista);
 
